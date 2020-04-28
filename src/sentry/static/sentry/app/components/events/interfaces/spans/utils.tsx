@@ -410,7 +410,6 @@ export function parseTrace(event: Readonly<SentryTransactionEvent>): ParsedTrace
       parentSpanID,
       numOfSpans: 0,
       spans: [],
-      orphanSpans: [],
     };
   }
 
