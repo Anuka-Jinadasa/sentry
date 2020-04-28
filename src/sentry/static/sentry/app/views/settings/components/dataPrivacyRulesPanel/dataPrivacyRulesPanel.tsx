@@ -8,9 +8,7 @@ import {Client} from 'app/api';
 import {addErrorMessage, addSuccessMessage} from 'app/actionCreators/indicator';
 import ExternalLink from 'app/components/links/externalLink';
 import SentryTypes from 'app/sentryTypes';
-import EmptyMessage from 'app/views/settings/components/emptyMessage';
 import Button from 'app/components/button';
-import {IconWarning} from 'app/icons/iconWarning';
 
 import {defaultSuggestions} from './dataPrivacyRulesPanelForm/dataPrivacyRulesPanelFormSelectorFieldSuggestions';
 import DataPrivacyRulesPanelRuleModal from './dataPrivacyRulesPanelRuleModal';
@@ -373,22 +371,15 @@ class DataPrivacyRulesPanel extends React.Component<Props, State> {
             })}
           </PanelAlert>
           <PanelBody>
-            {rules.length === 0 ? (
-              <EmptyMessage
-                icon={<IconWarning size="xl" />}
-                description={t('You have no data privacy rules')}
-              />
-            ) : (
-              <DataPrivacyRulesPanelContent
-                rules={rules}
-                disabled={disabled}
-                onDeleteRule={this.handleDeleteRule}
-                onUpdateRule={this.handleUpdateRule}
-                onUpdateEventId={this.handleUpdateEventId}
-                eventId={eventId}
-                selectorSuggestions={selectorSuggestions}
-              />
-            )}
+            <DataPrivacyRulesPanelContent
+              rules={rules}
+              disabled={disabled}
+              onDeleteRule={this.handleDeleteRule}
+              onUpdateRule={this.handleUpdateRule}
+              onUpdateEventId={this.handleUpdateEventId}
+              eventId={eventId}
+              selectorSuggestions={selectorSuggestions}
+            />
             <PanelAction>
               <Button
                 size="small"

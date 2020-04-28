@@ -3,8 +3,10 @@ import styled from '@emotion/styled';
 
 import {t} from 'app/locale';
 import space from 'app/styles/space';
-import {IconDelete} from 'app/icons/iconDelete';
 import {defined} from 'app/utils';
+import EmptyMessage from 'app/views/settings/components/emptyMessage';
+import {IconWarning} from 'app/icons/iconWarning';
+import {IconDelete} from 'app/icons/iconDelete';
 
 import DataPrivacyRulesPanelRuleModal from './dataPrivacyRulesPanelRuleModal';
 import {getRuleTypeSelectorFieldLabel, getMethodTypeSelectorFieldLabel} from './utils';
@@ -18,11 +20,11 @@ type Rule = NonNullable<DataPrivacyRulesPanelRuleModalProps['rule']>;
 type Props = {
   rules: Array<Rule>;
   onUpdateRule: (updatedRule: Rule) => void;
+  onDeleteRule: (rulesToBeDeleted: Array<Rule['id']>) => void;
 } & Pick<
   DataPrivacyRulesPanelRuleModalProps,
   'disabled' | 'eventId' | 'onUpdateEventId' | 'selectorSuggestions'
-> &
-  Required<Pick<DataPrivacyRulesPanelRuleModalProps, 'onDeleteRule'>>;
+>;
 
 type State = {
   selectedRules: Array<Rule['id']>;
@@ -121,13 +123,16 @@ class DataPrivacyRulesPanelContent extends React.Component<Props, State> {
 
   render() {
     const {selectedRules, editRule} = this.state;
-    const {
-      rules,
-      selectorSuggestions,
-      onDeleteRule,
-      onUpdateEventId,
-      eventId,
-    } = this.props;
+    const {rules, selectorSuggestions, onUpdateEventId, eventId} = this.props;
+
+    if (rules.length === 0) {
+      return (
+        <EmptyMessage
+          icon={<IconWarning size="xl" />}
+          description={t('You have no data privacy rules')}
+        />
+      );
+    }
 
     return (
       <React.Fragment>
@@ -153,7 +158,6 @@ class DataPrivacyRulesPanelContent extends React.Component<Props, State> {
             rule={rules[editRule]}
             selectorSuggestions={selectorSuggestions}
             onClose={this.handleCloseEditRuleModal}
-            onDeleteRule={onDeleteRule}
             onUpdateEventId={onUpdateEventId}
             onSaveRule={this.handleSave}
             eventId={eventId}
@@ -186,10 +190,10 @@ const ListItem = styled('li')<{isChecked?: boolean}>`
   border-bottom: 1px solid ${p => p.theme.borderDark};
   cursor: pointer;
   &:hover {
-    background-color: ${p => p.theme.offWhite};
     ${StyledIconDelete} {
       opacity: 1;
     }
+    background-color: ${p => p.theme.offWhite};
     span {
       color: ${p => p.theme.blue};
       text-decoration: underline;

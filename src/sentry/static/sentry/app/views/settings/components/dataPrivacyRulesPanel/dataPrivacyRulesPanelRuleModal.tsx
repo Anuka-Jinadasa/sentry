@@ -2,9 +2,7 @@ import React from 'react';
 import Modal from 'react-bootstrap/lib/Modal';
 import styled from '@emotion/styled';
 import omit from 'lodash/omit';
-import {css} from '@emotion/core';
 
-import space from 'app/styles/space';
 import Button from 'app/components/button';
 import ButtonBar from 'app/components/buttonBar';
 import {t} from 'app/locale';
@@ -28,7 +26,6 @@ type Props = Pick<
   Partial<Pick<DataPrivacyRulesPanelFormProps, 'rule'>> & {
     onSaveRule: (rule: Rule) => void;
     onClose: () => void;
-    onDeleteRule?: (rulesToBeDeleted: Array<Rule['id']>) => void;
   };
 
 type State = {
@@ -46,15 +43,6 @@ class DataPrivacyRulesPanelRuleModal extends React.Component<Props, State> {
       customRegularExpression: this.props.rule?.customRegularExpression,
     },
     isFormValid: false,
-  };
-
-  handleDeleteRule = (ruleId: Rule['id']) => () => {
-    const {onDeleteRule, onClose} = this.props;
-
-    if (onDeleteRule && defined(ruleId)) {
-      onDeleteRule([ruleId]);
-    }
-    onClose();
   };
 
   handleChange = (updatedRule: Rule) => {
@@ -91,19 +79,12 @@ class DataPrivacyRulesPanelRuleModal extends React.Component<Props, State> {
     const {onClose, disabled, selectorSuggestions, onUpdateEventId, eventId} = this.props;
     const {rule, isFormValid} = this.state;
 
-    const hasDeleteButton = rule?.id !== -1;
-
     return (
-      <StyledModal
-        show
-        animation={false}
-        onHide={onClose}
-        hasDeleteButton={hasDeleteButton}
-      >
+      <StyledModal show animation={false} onHide={onClose}>
         <Modal.Header closeButton>
-          {t(`${hasDeleteButton ? 'Edit' : 'Add'} a data privacy rule`)}
+          {t(`${rule?.id !== -1 ? 'Edit' : 'Add'} a data privacy rule`)}
         </Modal.Header>
-        <ModalContent>
+        <Modal.Body>
           <DataPrivacyRulesPanelForm
             onChange={this.handleChange}
             selectorSuggestions={selectorSuggestions}
@@ -112,9 +93,9 @@ class DataPrivacyRulesPanelRuleModal extends React.Component<Props, State> {
             onUpdateEventId={onUpdateEventId}
             eventId={eventId}
           />
-        </ModalContent>
-        <Footer>
-          <StyledButtonBar gap={1.5}>
+        </Modal.Body>
+        <Modal.Footer>
+          <ButtonBar gap={1.5}>
             <Button disabled={disabled} onClick={onClose} size="small">
               {t('Cancel')}
             </Button>
@@ -126,8 +107,8 @@ class DataPrivacyRulesPanelRuleModal extends React.Component<Props, State> {
             >
               {t('Save Rule')}
             </Button>
-          </StyledButtonBar>
-        </Footer>
+          </ButtonBar>
+        </Modal.Footer>
       </StyledModal>
     );
   }
@@ -135,25 +116,7 @@ class DataPrivacyRulesPanelRuleModal extends React.Component<Props, State> {
 
 export default DataPrivacyRulesPanelRuleModal;
 
-const ModalContent = styled(Modal.Body)`
-  flex: 1;
-`;
-
-const Footer = styled(Modal.Footer)`
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-gap: ${space(2)};
-  padding: ${space(1)} ${space(2)};
-  position: relative;
-`;
-
-const StyledButtonBar = styled(ButtonBar)`
-  justify-content: flex-end;
-`;
-
-const StyledModal = styled(Modal, {
-  shouldForwardProp: prop => prop !== 'hasDeleteButton',
-})<{hasDeleteButton?: boolean}>`
+const StyledModal = styled(Modal)`
   .modal-dialog {
     position: absolute;
     top: 50%;
@@ -167,12 +130,4 @@ const StyledModal = styled(Modal, {
   .close {
     outline: none;
   }
-
-  ${p =>
-    p.hasDeleteButton &&
-    css`
-      ${Footer} {
-        grid-template-columns: auto 1fr;
-      }
-    `}
 `;
