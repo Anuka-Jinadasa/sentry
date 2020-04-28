@@ -1,13 +1,11 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-import CheckboxFancy from 'app/components/checkboxFancy/checkboxFancy';
 import {t} from 'app/locale';
 import space from 'app/styles/space';
 import {IconDelete} from 'app/icons/iconDelete';
 import {defined} from 'app/utils';
 
-import DataPrivacyRulesPanelContentFilter from './dataPrivacyRulesPanelContentFilter';
 import DataPrivacyRulesPanelRuleModal from './dataPrivacyRulesPanelRuleModal';
 import {getRuleTypeSelectorFieldLabel, getMethodTypeSelectorFieldLabel} from './utils';
 
@@ -132,13 +130,7 @@ class DataPrivacyRulesPanelContent extends React.Component<Props, State> {
     } = this.props;
 
     return (
-      <div>
-        <DataPrivacyRulesPanelContentFilter
-          onSelectAll={this.handleSelectAll}
-          onDeleteAllSelected={this.handleDeleteAllSelected}
-          selectedQuantity={selectedRules.length}
-          isAllSelected={selectedRules.length === rules.length}
-        />
+      <React.Fragment>
         <List>
           {rules.map(({id, method, type, from}) => {
             const isChecked = selectedRules.includes(id);
@@ -150,11 +142,7 @@ class DataPrivacyRulesPanelContent extends React.Component<Props, State> {
                 isChecked={isChecked}
                 onClick={this.handleShowEditRuleModal(id)}
               >
-                <CheckboxFancy
-                  onClick={this.handleSelectRule(id, isChecked)}
-                  isChecked={isChecked}
-                />
-                <span>{`${methodLabel} ${typelabel} ${t('from')} ${from}`}</span>
+                <span>{`[${methodLabel}] [${typelabel}] ${t('from')} [${from}]`}</span>
                 <StyledIconDelete onClick={this.handleDeleteRule(id)} />
               </ListItem>
             );
@@ -171,7 +159,7 @@ class DataPrivacyRulesPanelContent extends React.Component<Props, State> {
             eventId={eventId}
           />
         )}
-      </div>
+      </React.Fragment>
     );
   }
 }
@@ -182,6 +170,7 @@ const List = styled('ul')`
   list-style: none;
   margin: 0;
   padding: 0;
+  margin-bottom: 0 !important;
 `;
 
 const StyledIconDelete = styled(IconDelete)`
@@ -190,30 +179,24 @@ const StyledIconDelete = styled(IconDelete)`
 
 const ListItem = styled('li')<{isChecked?: boolean}>`
   display: grid;
-  grid-template-columns: 20px 1fr 16px;
+  grid-template-columns: 1fr 20px;
   grid-column-gap: ${space(1)};
   align-items: center;
   padding: ${space(1)} ${space(2)};
   border-bottom: 1px solid ${p => p.theme.borderDark};
   cursor: pointer;
-  :hover {
+  &:hover {
     background-color: ${p => p.theme.offWhite};
+    ${StyledIconDelete} {
+      opacity: 1;
+    }
+    span {
+      color: ${p => p.theme.blue};
+      text-decoration: underline;
+    }
   }
 
-  ${CheckboxFancy} {
-    opacity: ${p => (p.isChecked ? 1 : 0.3)};
-  }
-
-  &:hover ${StyledIconDelete} {
-    opacity: 1;
-  }
-
-  &:hover ${CheckboxFancy} {
-    opacity: 1;
-  }
-
-  &:hover span {
-    color: ${p => p.theme.blue};
-    text-decoration: underline;
+  &:last-child {
+    border-bottom: 0;
   }
 `;

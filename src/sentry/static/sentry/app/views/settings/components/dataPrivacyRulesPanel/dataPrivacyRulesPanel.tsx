@@ -8,15 +8,17 @@ import {Client} from 'app/api';
 import {addErrorMessage, addSuccessMessage} from 'app/actionCreators/indicator';
 import ExternalLink from 'app/components/links/externalLink';
 import SentryTypes from 'app/sentryTypes';
+import EmptyMessage from 'app/views/settings/components/emptyMessage';
+import Button from 'app/components/button';
+import {IconWarning} from 'app/icons/iconWarning';
 
 import {defaultSuggestions} from './dataPrivacyRulesPanelForm/dataPrivacyRulesPanelFormSelectorFieldSuggestions';
 import DataPrivacyRulesPanelRuleModal from './dataPrivacyRulesPanelRuleModal';
 import DataPrivacyRulesPanelContent from './dataPrivacyRulesPanelContent';
-import DataPrivacyRulesPanelEmpty, {
-  ADVANCED_DATASCRUBBING_LINK,
-} from './dataPrivacyRulesPanelEmpty';
-import DataPrivacyRulesPanelButtonAddRule from './dataPrivacyRulesPanelButtonAddRule';
 import {RULE_TYPE, METHOD_TYPE, EVENT_ID_FIELD_STATUS} from './utils';
+
+const ADVANCED_DATASCRUBBING_LINK =
+  'https://docs.sentry.io/data-management/advanced-datascrubbing/';
 
 type Rule = NonNullable<
   React.ComponentProps<typeof DataPrivacyRulesPanelRuleModal>['rule']
@@ -370,34 +372,42 @@ class DataPrivacyRulesPanel extends React.Component<Props, State> {
               ),
             })}
           </PanelAlert>
-          {rules.length === 0 ? (
-            <PanelBody>
-              <DataPrivacyRulesPanelEmpty
-                onAddRule={this.handleToggleAddRuleModal(true)}
-                disabled={disabled}
+          <PanelBody>
+            {rules.length === 0 ? (
+              <EmptyMessage
+                icon={<IconWarning size="xl" />}
+                description={t('You have no data privacy rules')}
               />
-            </PanelBody>
-          ) : (
-            <React.Fragment>
-              <PanelBody>
-                <DataPrivacyRulesPanelContent
-                  rules={rules}
-                  disabled={disabled}
-                  onDeleteRule={this.handleDeleteRule}
-                  onUpdateRule={this.handleUpdateRule}
-                  onUpdateEventId={this.handleUpdateEventId}
-                  eventId={eventId}
-                  selectorSuggestions={selectorSuggestions}
-                />
-              </PanelBody>
-              <PanelAction>
-                <DataPrivacyRulesPanelButtonAddRule
-                  onClick={this.handleToggleAddRuleModal(true)}
-                  disabled={disabled}
-                />
-              </PanelAction>
-            </React.Fragment>
-          )}
+            ) : (
+              <DataPrivacyRulesPanelContent
+                rules={rules}
+                disabled={disabled}
+                onDeleteRule={this.handleDeleteRule}
+                onUpdateRule={this.handleUpdateRule}
+                onUpdateEventId={this.handleUpdateEventId}
+                eventId={eventId}
+                selectorSuggestions={selectorSuggestions}
+              />
+            )}
+            <PanelAction>
+              <Button
+                size="small"
+                disabled={disabled}
+                onClick={this.handleToggleAddRuleModal(true)}
+                priority="primary"
+              >
+                {t('Add Rule')}
+              </Button>
+              <Button
+                size="small"
+                href={ADVANCED_DATASCRUBBING_LINK}
+                target="_blank"
+                disabled={disabled}
+              >
+                {t('Learn More')}
+              </Button>
+            </PanelAction>
+          </PanelBody>
         </Panel>
         {showAddRuleModal && (
           <DataPrivacyRulesPanelRuleModal
@@ -418,6 +428,9 @@ export default DataPrivacyRulesPanel;
 const PanelAction = styled('div')`
   padding: ${space(1)} ${space(2)};
   position: relative;
-  display: flex;
-  justify-content: flex-end;
+  display: grid;
+  grid-gap: ${space(1)};
+  grid-template-columns: auto auto;
+  justify-content: flex-start;
+  border-top: 1px solid ${p => p.theme.borderDark};
 `;

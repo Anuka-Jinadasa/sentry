@@ -101,7 +101,7 @@ class DataPrivacyRulesPanelRuleModal extends React.Component<Props, State> {
         hasDeleteButton={hasDeleteButton}
       >
         <Modal.Header closeButton>
-          {t(`Data Privacy Rules - ${hasDeleteButton ? 'Edit' : 'Add'} Rule`)}
+          {t(`${hasDeleteButton ? 'Edit' : 'Add'} a data privacy rule`)}
         </Modal.Header>
         <ModalContent>
           <DataPrivacyRulesPanelForm
@@ -112,32 +112,22 @@ class DataPrivacyRulesPanelRuleModal extends React.Component<Props, State> {
             onUpdateEventId={onUpdateEventId}
             eventId={eventId}
           />
-          <Footer>
-            {hasDeleteButton && (
-              <Button
-                disabled={disabled}
-                onClick={this.handleDeleteRule(rule.id)}
-                size="small"
-                priority="danger"
-              >
-                {t('Delete')}
-              </Button>
-            )}
-            <StyledButtonBar gap={1.5}>
-              <Button disabled={disabled} onClick={onClose} size="small">
-                {t('Cancel')}
-              </Button>
-              <Button
-                disabled={disabled || !isFormValid}
-                onClick={this.handleSave}
-                size="small"
-                priority="primary"
-              >
-                {t('Save')}
-              </Button>
-            </StyledButtonBar>
-          </Footer>
         </ModalContent>
+        <Footer>
+          <StyledButtonBar gap={1.5}>
+            <Button disabled={disabled} onClick={onClose} size="small">
+              {t('Cancel')}
+            </Button>
+            <Button
+              disabled={disabled || !isFormValid}
+              onClick={this.handleSave}
+              size="small"
+              priority="primary"
+            >
+              {t('Save Rule')}
+            </Button>
+          </StyledButtonBar>
+        </Footer>
       </StyledModal>
     );
   }
@@ -147,10 +137,9 @@ export default DataPrivacyRulesPanelRuleModal;
 
 const ModalContent = styled(Modal.Body)`
   flex: 1;
-  margin: 0 -30px -30px -30px;
 `;
 
-const Footer = styled('div')`
+const Footer = styled(Modal.Footer)`
   display: grid;
   grid-template-columns: 1fr;
   grid-gap: ${space(2)};
@@ -166,19 +155,14 @@ const StyledModal = styled(Modal, {
   shouldForwardProp: prop => prop !== 'hasDeleteButton',
 })<{hasDeleteButton?: boolean}>`
   .modal-dialog {
-    width: calc(100% - ${space(4)});
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%) !important;
     margin: 0;
-    @media (min-width: ${p => p.theme.breakpoints[2]}) {
-      width: 900px;
+    @media (max-width: ${p => p.theme.breakpoints[0]}) {
+      width: 100%;
     }
-  }
-  .modal-header {
-    margin-bottom: 0;
-    padding: ${space(3)} ${space(2)};
   }
   .close {
     outline: none;

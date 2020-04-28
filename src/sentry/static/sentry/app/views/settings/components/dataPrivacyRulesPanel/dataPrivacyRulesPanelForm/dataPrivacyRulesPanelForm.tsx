@@ -104,9 +104,9 @@ class DataPrivacyRulesForm extends React.PureComponent<Props, State> {
           onUpdateEventId={onUpdateEventId}
           eventId={eventId}
         />
-        <WrapperFields>
+        <WrapperSelectFields>
           <DataPrivacyRulesPanelFormField
-            label={t('Redaction Method')}
+            label={t('Method')}
             tooltipInfo={t('What to do')}
           >
             <DataPrivacyRulesPanelFormSelectControl
@@ -122,7 +122,7 @@ class DataPrivacyRulesForm extends React.PureComponent<Props, State> {
             />
           </DataPrivacyRulesPanelFormField>
           <DataPrivacyRulesPanelFormField
-            label={t('Rule Type')}
+            label={t('Data Type')}
             tooltipInfo={t('What to look for')}
           >
             <DataPrivacyRulesPanelFormSelectControl
@@ -137,41 +137,41 @@ class DataPrivacyRulesForm extends React.PureComponent<Props, State> {
               isDisabled={disabled}
             />
           </DataPrivacyRulesPanelFormField>
+        </WrapperSelectFields>
+        {type === RULE_TYPE.PATTERN && (
           <DataPrivacyRulesPanelFormField
-            label={t('From (Selector)')}
-            tooltipInfo={t('Where to look')}
+            label={t('Regex matches')}
+            tooltipInfo={t('Custom Perl-style regex (PCRE)')}
+            isFullWidth
           >
-            <DataPrivacyRulesPanelSelectorField
+            <CustomRegularExpression
+              name="customRegularExpression"
+              placeholder={t('Enter custom regular expression')}
               onChange={(value: string) => {
-                this.handleChange('from', value);
+                this.handleChange('customRegularExpression', value);
               }}
-              value={from}
-              onBlur={this.handleValidation('from')}
-              selectorSuggestions={selectorSuggestions}
-              error={errors.from}
+              value={customRegularExpression}
+              onBlur={this.handleValidation('customRegularExpression')}
+              error={errors.customRegularExpression}
               disabled={disabled}
             />
           </DataPrivacyRulesPanelFormField>
-          {type === RULE_TYPE.PATTERN && (
-            <DataPrivacyRulesPanelFormField
-              label={t('Regex matches')}
-              tooltipInfo={t('Custom Perl-style regex (PCRE)')}
-              isFullWidth
-            >
-              <CustomRegularExpression
-                name="customRegularExpression"
-                placeholder={t('Enter custom regular expression')}
-                onChange={(value: string) => {
-                  this.handleChange('customRegularExpression', value);
-                }}
-                value={customRegularExpression}
-                onBlur={this.handleValidation('customRegularExpression')}
-                error={errors.customRegularExpression}
-                disabled={disabled}
-              />
-            </DataPrivacyRulesPanelFormField>
-          )}
-        </WrapperFields>
+        )}
+        <DataPrivacyRulesPanelFormField
+          label={t('Source')}
+          tooltipInfo={t('Where to look')}
+        >
+          <DataPrivacyRulesPanelSelectorField
+            onChange={(value: string) => {
+              this.handleChange('from', value);
+            }}
+            value={from}
+            onBlur={this.handleValidation('from')}
+            selectorSuggestions={selectorSuggestions}
+            error={errors.from}
+            disabled={disabled}
+          />
+        </DataPrivacyRulesPanelFormField>
       </Wrapper>
     );
   }
@@ -180,17 +180,16 @@ class DataPrivacyRulesForm extends React.PureComponent<Props, State> {
 export default DataPrivacyRulesForm;
 
 const Wrapper = styled('div')`
-  padding: ${space(3)} ${space(2)} ${space(4)} ${space(2)};
-  border-bottom: 1px solid ${p => p.theme.borderDark};
+  display: grid;
+  grid-row-gap: ${space(3)};
 `;
 
-const WrapperFields = styled('div')`
+const WrapperSelectFields = styled('div')`
   display: grid;
   grid-gap: ${space(2)};
-  grid-row-gap: ${space(3)};
   grid-template-columns: 1fr;
   @media (min-width: ${p => p.theme.breakpoints[0]}) {
-    grid-template-columns: 200px 200px 1fr;
+    grid-template-columns: auto auto;
   }
 `;
 
@@ -201,5 +200,4 @@ const CustomRegularExpression = styled(TextField)`
     height: 34px;
     font-family: ${p => p.theme.text.familyMono};
   }
-  margin-bottom: 0;
 `;

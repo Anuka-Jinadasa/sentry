@@ -122,7 +122,7 @@ class DataPrivacyRulesPanelFormEventId extends React.Component<Props, State> {
     const {value, status} = this.state;
 
     return (
-      <Alert type="warning">
+      <StyledAlert type="warning">
         <DataPrivacyRulesPanelFormField
           label={t('Show suggestions according to the Event')}
           tooltipInfo={t('to do')}
@@ -146,7 +146,7 @@ class DataPrivacyRulesPanelFormEventId extends React.Component<Props, State> {
             </Status>
           </EventIdFieldWrapper>
         </DataPrivacyRulesPanelFormField>
-      </Alert>
+      </StyledAlert>
     );
   }
 }
@@ -159,9 +159,6 @@ const StyledTextField = styled(TextField)<{showStatus: boolean}>`
     height: 34px;
     padding-right: ${p => (p.showStatus ? space(4) : space(1.5))};
   }
-  :first-child {
-    margin-bottom: 0;
-  }
 `;
 
 const Status = styled('div')`
@@ -173,4 +170,8 @@ const EventIdFieldWrapper = styled('div')`
   position: relative;
   display: flex;
   align-items: center;
+`;
+
+const StyledAlert = styled(Alert)`
+  margin: 0;
 `;

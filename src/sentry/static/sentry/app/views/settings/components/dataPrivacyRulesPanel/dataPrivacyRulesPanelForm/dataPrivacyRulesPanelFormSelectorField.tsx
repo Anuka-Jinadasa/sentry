@@ -350,7 +350,7 @@ class DataPrivacyRulesPanelSelectorField extends React.Component<Props, State> {
       <Wrapper ref={this.selectorField}>
         <StyledTextField
           name="from"
-          placeholder={t('an attribute, variable, or header name')}
+          placeholder={t('Enter custom attribute, variable or a header name')}
           onChange={this.handleChange}
           autoComplete="off"
           value={value}

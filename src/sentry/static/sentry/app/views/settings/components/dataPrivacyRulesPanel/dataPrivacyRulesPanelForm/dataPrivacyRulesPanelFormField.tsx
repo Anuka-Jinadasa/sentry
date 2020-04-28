@@ -23,7 +23,7 @@ const DataPrivacyRulesPanelFormField = ({
     <Label>
       <LabelDescription>{label}</LabelDescription>
       <Tooltip title={tooltipInfo} position="top">
-        <IconQuestion color="blue" />
+        <IconQuestion color="gray1" />
       </Tooltip>
     </Label>
     {children}
