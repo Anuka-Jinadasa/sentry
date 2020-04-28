@@ -435,14 +435,8 @@ export function parseTrace(event: Readonly<SentryTransactionEvent>): ParsedTrace
     return true;
   });
 
+  // sort orphaned span children by their start timestamps in ascending order
   orphanSpans.sort(sortSpansAscending);
-
-  orphanSpans.sort((firstSpan: RawSpanType, _secondSpan: RawSpanType) => {
-    if (firstSpan.parent_span_id === undefined) {
-      return -1;
-    }
-    return 0;
-  });
 
   // TODO: debug
   const result = orphanTheseSpans(
