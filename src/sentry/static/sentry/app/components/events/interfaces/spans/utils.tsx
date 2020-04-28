@@ -444,6 +444,16 @@ export function parseTrace(event: Readonly<SentryTransactionEvent>): ParsedTrace
     spans,
   };
 
+  // TODO: DEBUG
+  const orphanMarkers = new Set([
+    // '91bf78ba24c31086',
+    '86620893f627b0a6',
+    'a87d8dce1e4d8f88',
+    // 'b9884f1007035621'
+  ]);
+
+  // console.log('spans', spans);
+
   const reduced: ParsedTraceType = spans.reduce((acc, inputSpan) => {
     let span: SpanType = inputSpan;
 
@@ -451,7 +461,11 @@ export function parseTrace(event: Readonly<SentryTransactionEvent>): ParsedTrace
 
     const hasParent = parentSpanId && potentialParents.has(parentSpanId);
 
-    if (!isValidSpanID(parentSpanId) || !hasParent) {
+    if (
+      !isValidSpanID(parentSpanId) ||
+      !hasParent ||
+      (parentSpanId && orphanMarkers.has(span.span_id))
+    ) {
       // this span is considered an orphan with respect to the spans within this transaction.
       // although the span is an orphan, it's still a descendant of this transaction,
       // so we set its parent span id to be the root transaction span's id
@@ -541,22 +555,3 @@ function sortSpans(firstSpan: SpanType, secondSpan: SpanType) {
   // sort secondSpan before firstSpan
   return 1;
 }
-
-// DEBUG
-// function orphanTheseSpans(spans: Array<RawSpanType>, needleSpanIds: Set<string>) {
-//   const orphanSpans: RawSpanType[] = [];
-
-//   spans = spans.filter(span => {
-//     if (needleSpanIds.has(span.span_id)) {
-//       orphanSpans.push(span);
-//       return false;
-//     }
-
-//     return true;
-//   });
-
-//   return {
-//     spans,
-//     orphanSpans,
-//   };
-// }
